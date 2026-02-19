@@ -1,69 +1,80 @@
 import { useState, useEffect, useRef } from "react";
 
-const TERMINAL_LINES = [
-  "$ Connecting to Free Fire servers...",
-  "$ Establishing secure connection...",
-  "[OK] Connection established",
-  "$ Authenticating UID...",
-  "[OK] UID verified successfully",
-  "$ Loading player profile...",
-  "[OK] Player data loaded",
-  "$ Checking current rank: GOLD III",
-  "$ Initializing HAYATO RANK UP module...",
-  "[OK] Module loaded v3.7.2",
-  "$ Bypassing anti-cheat detection...",
-  "[OK] Anti-cheat bypassed",
-  "$ Injecting rank boost packets...",
-  ">>> Sending packet 1/50...",
-  ">>> Sending packet 5/50...",
-  ">>> Sending packet 12/50...",
-  ">>> Sending packet 23/50...",
-  "[OK] Packets injected successfully",
-  "$ Modifying match history...",
-  "[OK] Match history updated",
-  "$ Boosting ELO rating...",
-  ">>> ELO +150 applied",
-  ">>> ELO +200 applied",
-  ">>> ELO +300 applied",
-  "[OK] ELO boost complete",
-  "$ Updating rank data...",
-  ">>> Current rank: GOLD III → HEROIC",
-  "[OK] Rank updated on server",
-  "$ Syncing with game servers...",
-  "[OK] Data synced",
-  "$ Verifying rank change...",
-  "[OK] Rank change verified",
-  "$ Applying golden VIP badge...",
-  "[OK] VIP badge applied",
-  "$ Clearing server logs...",
-  "[OK] Logs cleared",
-  "$ Finalizing rank boost...",
-  "[OK] RANK UP COMPLETE!",
-  "",
-  "========================================",
-  "  RANK UP SUCCESSFUL! 🏆",
-  "  NEW RANK: GRANDMASTER",
-  "========================================",
-];
+const RANK_LABELS: Record<string, string> = {
+  diamond: "DIAMOND",
+  heroic: "HEROIC",
+  grandmaster: "GRANDMASTER",
+};
+
+const getTerminalLines = (targetRank: string) => {
+  const rankLabel = RANK_LABELS[targetRank] || "GRANDMASTER";
+  return [
+    "$ Connecting to Free Fire servers...",
+    "$ Establishing secure connection...",
+    "[OK] Connection established",
+    "$ Authenticating UID...",
+    "[OK] UID verified successfully",
+    "$ Loading player profile...",
+    "[OK] Player data loaded",
+    "$ Checking current rank: GOLD III",
+    `$ Initializing HAYATO RANK UP module (Target: ${rankLabel})...`,
+    "[OK] Module loaded v3.7.2",
+    "$ Bypassing anti-cheat detection...",
+    "[OK] Anti-cheat bypassed",
+    "$ Injecting rank boost packets...",
+    ">>> Sending packet 1/50...",
+    ">>> Sending packet 5/50...",
+    ">>> Sending packet 12/50...",
+    ">>> Sending packet 23/50...",
+    "[OK] Packets injected successfully",
+    "$ Modifying match history...",
+    "[OK] Match history updated",
+    "$ Boosting ELO rating...",
+    ">>> ELO +150 applied",
+    ">>> ELO +200 applied",
+    ">>> ELO +300 applied",
+    "[OK] ELO boost complete",
+    "$ Updating rank data...",
+    `>>> Current rank: GOLD III → ${rankLabel}`,
+    "[OK] Rank updated on server",
+    "$ Syncing with game servers...",
+    "[OK] Data synced",
+    "$ Verifying rank change...",
+    "[OK] Rank change verified",
+    "$ Applying golden VIP badge...",
+    "[OK] VIP badge applied",
+    "$ Clearing server logs...",
+    "[OK] Logs cleared",
+    "$ Finalizing rank boost...",
+    "[OK] RANK UP COMPLETE!",
+    "",
+    "========================================",
+    `  RANK UP SUCCESSFUL! 🏆`,
+    `  NEW RANK: ${rankLabel}`,
+    "========================================",
+  ];
+};
 
 interface FakeTerminalProps {
   onComplete: () => void;
+  targetRank: string;
 }
 
-const FakeTerminal = ({ onComplete }: FakeTerminalProps) => {
+const FakeTerminal = ({ onComplete, targetRank }: FakeTerminalProps) => {
   const [lines, setLines] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const terminalLines = getTerminalLines(targetRank);
     const totalDuration = 180000; // 3 minutes
-    const interval = totalDuration / TERMINAL_LINES.length;
+    const interval = totalDuration / terminalLines.length;
     let index = 0;
 
     const timer = setInterval(() => {
-      if (index < TERMINAL_LINES.length) {
-        setLines((prev) => [...prev, TERMINAL_LINES[index]]);
-        setProgress(((index + 1) / TERMINAL_LINES.length) * 100);
+      if (index < terminalLines.length) {
+        setLines((prev) => [...prev, terminalLines[index]]);
+        setProgress(((index + 1) / terminalLines.length) * 100);
         index++;
       } else {
         clearInterval(timer);

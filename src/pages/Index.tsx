@@ -8,16 +8,23 @@ const REGIONS = [
   "Singapore", "Taiwan",
 ];
 
+const TARGET_RANKS = [
+  { value: "diamond", label: "💎 Diamond", color: "text-blue-400" },
+  { value: "heroic", label: "🦅 Heroic", color: "text-purple-400" },
+  { value: "grandmaster", label: "👑 Grandmaster", color: "text-primary" },
+];
+
 type Step = "form" | "terminal" | "done";
 
 const Index = () => {
   const [step, setStep] = useState<Step>("form");
   const [region, setRegion] = useState("");
   const [uid, setUid] = useState("");
+  const [targetRank, setTargetRank] = useState("");
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
-    if (region && uid.length >= 6) {
+    if (region && uid.length >= 6 && targetRank) {
       setStep("terminal");
     }
   };
@@ -80,6 +87,29 @@ const Index = () => {
               </select>
             </div>
 
+            {/* Target Rank */}
+            <div className="mb-6">
+              <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
+                TARGET RANK
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                {TARGET_RANKS.map((rank) => (
+                  <button
+                    key={rank.value}
+                    type="button"
+                    onClick={() => setTargetRank(rank.value)}
+                    className={`px-3 py-3 rounded-lg border font-display font-bold text-sm transition-all ${
+                      targetRank === rank.value
+                        ? "border-primary bg-primary/10 gold-glow"
+                        : "border-border bg-secondary hover:border-primary/50"
+                    }`}
+                  >
+                    <span className={rank.color}>{rank.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* UID input */}
             <div className="mb-8">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
@@ -111,11 +141,11 @@ const Index = () => {
         )}
 
         {step === "terminal" && (
-          <FakeTerminal onComplete={handleTerminalComplete} />
+          <FakeTerminal onComplete={handleTerminalComplete} targetRank={targetRank} />
         )}
 
         {step === "done" && (
-          <CongratulationsScreen uid={uid} region={region} />
+          <CongratulationsScreen uid={uid} region={region} targetRank={targetRank} />
         )}
       </div>
 
