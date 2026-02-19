@@ -1,4 +1,10 @@
-const CongratulationsScreen = ({ uid, region }: { uid: string; region: string }) => {
+const RANK_LABELS: Record<string, string> = {
+  diamond: "DIAMOND 💎",
+  heroic: "HEROIC 🦅",
+  grandmaster: "GRANDMASTER 👑",
+};
+
+const CongratulationsScreen = ({ uid, region, targetRank }: { uid: string; region: string; targetRank: string }) => {
   return (
     <div className="text-center animate-[fadeInUp_0.8s_ease-out] max-w-lg mx-auto">
       {/* Big emoji */}
@@ -27,7 +33,7 @@ const CongratulationsScreen = ({ uid, region }: { uid: string; region: string })
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">New Rank:</span>
-            <span className="text-primary font-bold">GRANDMASTER</span>
+            <span className="text-primary font-bold">{RANK_LABELS[targetRank] || "GRANDMASTER 👑"}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">VIP Status:</span>
