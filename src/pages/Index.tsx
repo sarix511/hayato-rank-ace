@@ -14,6 +14,11 @@ const TARGET_RANKS = [
   { value: "grandmaster", label: "👑 Grandmaster", color: "text-primary" },
 ];
 
+const PUSH_OPTIONS = [
+  { value: "1hour", label: "⚡ 1 Hour Push", duration: 60000, desc: "Quick Boost" },
+  { value: "48hours", label: "🔥 48 Hours Push", duration: 1800000, desc: "Max Power" },
+];
+
 type Step = "form" | "terminal" | "done";
 
 const Index = () => {
@@ -21,10 +26,11 @@ const Index = () => {
   const [region, setRegion] = useState("");
   const [uid, setUid] = useState("");
   const [targetRank, setTargetRank] = useState("");
+  const [pushOption, setPushOption] = useState("");
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
-    if (region && uid.length >= 6 && targetRank) {
+    if (region && uid.length >= 6 && targetRank && pushOption) {
       setStep("terminal");
     }
   };
@@ -98,13 +104,50 @@ const Index = () => {
                     key={rank.value}
                     type="button"
                     onClick={() => setTargetRank(rank.value)}
-                    className={`px-3 py-3 rounded-lg border font-display font-bold text-sm transition-all ${
+                    className={`relative px-3 py-4 rounded-lg border font-display font-bold text-sm transition-all overflow-hidden group ${
                       targetRank === rank.value
-                        ? "border-primary bg-primary/10 gold-glow"
-                        : "border-border bg-secondary hover:border-primary/50"
+                        ? "border-primary bg-primary/15 gold-glow scale-105"
+                        : "border-border bg-secondary hover:border-primary/50 hover:scale-102"
                     }`}
                   >
-                    <span className={rank.color}>{rank.label}</span>
+                    {/* Shimmer overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    {targetRank === rank.value && (
+                      <div className="absolute inset-0 shimmer-overlay" />
+                    )}
+                    <span className={`relative z-10 ${targetRank === rank.value ? "gold-text-gradient" : rank.color}`}>
+                      {rank.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Push Duration */}
+            <div className="mb-6">
+              <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
+                PUSH DURATION
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {PUSH_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setPushOption(opt.value)}
+                    className={`relative px-4 py-4 rounded-lg border font-display font-bold text-sm transition-all overflow-hidden group ${
+                      pushOption === opt.value
+                        ? "border-primary bg-primary/15 gold-glow scale-105"
+                        : "border-border bg-secondary hover:border-primary/50 hover:scale-102"
+                    }`}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    {pushOption === opt.value && (
+                      <div className="absolute inset-0 shimmer-overlay" />
+                    )}
+                    <span className={`relative z-10 block ${pushOption === opt.value ? "gold-text-gradient" : "text-foreground"}`}>
+                      {opt.label}
+                    </span>
+                    <span className="relative z-10 block text-xs text-muted-foreground mt-1">{opt.desc}</span>
                   </button>
                 ))}
               </div>
@@ -141,7 +184,7 @@ const Index = () => {
         )}
 
         {step === "terminal" && (
-          <FakeTerminal onComplete={handleTerminalComplete} targetRank={targetRank} />
+          <FakeTerminal onComplete={handleTerminalComplete} targetRank={targetRank} duration={PUSH_OPTIONS.find(o => o.value === pushOption)?.duration || 180000} />
         )}
 
         {step === "done" && (

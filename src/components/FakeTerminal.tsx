@@ -58,17 +58,17 @@ const getTerminalLines = (targetRank: string) => {
 interface FakeTerminalProps {
   onComplete: () => void;
   targetRank: string;
+  duration: number;
 }
 
-const FakeTerminal = ({ onComplete, targetRank }: FakeTerminalProps) => {
+const FakeTerminal = ({ onComplete, targetRank, duration }: FakeTerminalProps) => {
   const [lines, setLines] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const terminalLines = getTerminalLines(targetRank);
-    const totalDuration = 180000; // 3 minutes
-    const interval = totalDuration / terminalLines.length;
+    const interval = duration / terminalLines.length;
     let index = 0;
 
     const timer = setInterval(() => {
