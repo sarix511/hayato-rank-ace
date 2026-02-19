@@ -98,6 +98,19 @@
       hsl(0 0% 0% / 0.03) 4px
     );
   }
+
+  .shimmer-overlay {
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      hsl(45 100% 50% / 0.15) 40%,
+      hsl(45 100% 70% / 0.25) 50%,
+      hsl(45 100% 50% / 0.15) 60%,
+      transparent 80%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite linear;
+  }
 }
 
 @keyframes blink {
