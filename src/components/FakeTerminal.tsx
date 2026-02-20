@@ -6,35 +6,41 @@ const RANK_LABELS: Record<string, string> = {
   grandmaster: "GRANDMASTER",
 };
 
-const getTerminalLines = (targetRank: string) => {
+const MODE_LABELS: Record<string, string> = {
+  br: "BATTLE ROYALE",
+  cs: "CLASH SQUAD",
+};
+
+const getTerminalLines = (targetRank: string, gameMode: string) => {
   const rankLabel = RANK_LABELS[targetRank] || "GRANDMASTER";
+  const modeLabel = MODE_LABELS[gameMode] || "BR";
   return [
-    "$ Connecting to Free Fire servers...",
+    `$ Connecting to Free Fire ${modeLabel} servers...`,
     "$ Establishing secure connection...",
     "[OK] Connection established",
     "$ Authenticating UID...",
     "[OK] UID verified successfully",
-    "$ Loading player profile...",
+    `$ Loading ${modeLabel} player profile...`,
     "[OK] Player data loaded",
-    "$ Checking current rank: GOLD III",
-    `$ Initializing HAYATO RANK UP module (Target: ${rankLabel})...`,
+    `$ Checking current ${modeLabel} rank: GOLD III`,
+    `$ Initializing HAYATO RANK UP module (${modeLabel} → ${rankLabel})...`,
     "[OK] Module loaded v3.7.2",
     "$ Bypassing anti-cheat detection...",
     "[OK] Anti-cheat bypassed",
-    "$ Injecting rank boost packets...",
+    `$ Injecting ${modeLabel} rank boost packets...`,
     ">>> Sending packet 1/50...",
     ">>> Sending packet 5/50...",
     ">>> Sending packet 12/50...",
     ">>> Sending packet 23/50...",
     "[OK] Packets injected successfully",
-    "$ Modifying match history...",
+    `$ Modifying ${modeLabel} match history...`,
     "[OK] Match history updated",
     "$ Boosting ELO rating...",
     ">>> ELO +150 applied",
     ">>> ELO +200 applied",
     ">>> ELO +300 applied",
     "[OK] ELO boost complete",
-    "$ Updating rank data...",
+    `$ Updating ${modeLabel} rank data...`,
     `>>> Current rank: GOLD III → ${rankLabel}`,
     "[OK] Rank updated on server",
     "$ Syncing with game servers...",
@@ -45,11 +51,11 @@ const getTerminalLines = (targetRank: string) => {
     "[OK] VIP badge applied",
     "$ Clearing server logs...",
     "[OK] Logs cleared",
-    "$ Finalizing rank boost...",
-    "[OK] RANK UP COMPLETE!",
+    `$ Finalizing ${modeLabel} rank boost...`,
+    `[OK] ${modeLabel} RANK UP COMPLETE!`,
     "",
     "========================================",
-    `  RANK UP SUCCESSFUL! 🏆`,
+    `  ${modeLabel} RANK UP SUCCESSFUL! 🏆`,
     `  NEW RANK: ${rankLabel}`,
     "========================================",
   ];
@@ -58,16 +64,17 @@ const getTerminalLines = (targetRank: string) => {
 interface FakeTerminalProps {
   onComplete: () => void;
   targetRank: string;
+  gameMode: string;
   duration: number;
 }
 
-const FakeTerminal = ({ onComplete, targetRank, duration }: FakeTerminalProps) => {
+const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTerminalProps) => {
   const [lines, setLines] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const terminalLines = getTerminalLines(targetRank);
+    const terminalLines = getTerminalLines(targetRank, gameMode);
     const interval = duration / terminalLines.length;
     let index = 0;
 
@@ -99,7 +106,7 @@ const FakeTerminal = ({ onComplete, targetRank, duration }: FakeTerminalProps) =
         <div className="w-3 h-3 rounded-full bg-primary" />
         <div className="w-3 h-3 rounded-full bg-terminal" />
         <span className="ml-2 font-mono text-xs text-muted-foreground">
-          HAYATO_RANKBOT_v3.7.2 — Terminal
+          HAYATO_RANKBOT_v3.7.2 — {MODE_LABELS[gameMode] || "Terminal"}
         </span>
       </div>
 
