@@ -35,9 +35,11 @@ const Index = () => {
   const [pushOption, setPushOption] = useState("");
   const [gameMode, setGameMode] = useState("");
 
+  const isFormValid = region !== "" && uid.length >= 6 && targetRank !== "" && pushOption !== "" && gameMode !== "";
+
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
-    if (region && uid.length >= 6 && targetRank && pushOption && gameMode) {
+    if (isFormValid) {
       setStep("terminal");
     }
   };
@@ -205,9 +207,14 @@ const Index = () => {
             {/* Submit button */}
             <button
               type="submit"
-              className="w-full py-4 rounded-lg font-display font-bold text-lg tracking-widest gold-gradient text-primary-foreground hover:opacity-90 transition-opacity gold-glow"
+              disabled={!isFormValid}
+              className={`w-full py-4 rounded-lg font-display font-bold text-lg tracking-widest transition-all ${
+                isFormValid
+                  ? "gold-gradient text-primary-foreground hover:opacity-90 gold-glow cursor-pointer animate-[pulseGlow_2s_infinite]"
+                  : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+              }`}
             >
-              🚀 START RANK UP
+              {isFormValid ? "🚀 START RANK UP" : "⚠️ FILL ALL FIELDS"}
             </button>
           </form>
         )}
