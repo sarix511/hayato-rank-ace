@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import FakeTerminal from "@/components/FakeTerminal";
 import CongratulationsScreen from "@/components/CongratulationsScreen";
 import blueTick from "@/assets/blue-tick.png";
+import { playClick } from "@/lib/sounds";
 
 const REGIONS = [
   "India", "Brazil", "Indonesia", "Thailand", "Vietnam",
@@ -34,12 +35,14 @@ const Index = () => {
   const [targetRank, setTargetRank] = useState("");
   const [pushOption, setPushOption] = useState("");
   const [gameMode, setGameMode] = useState("");
+  const [tokenFile, setTokenFile] = useState<File | null>(null);
 
   const isFormValid = region !== "" && uid.length >= 6 && targetRank !== "" && pushOption !== "" && gameMode !== "";
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
     if (isFormValid) {
+      playClick();
       setStep("terminal");
     }
   };
@@ -47,6 +50,19 @@ const Index = () => {
   const handleTerminalComplete = useCallback(() => {
     setStep("done");
   }, []);
+
+  const handleTokenFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setTokenFile(file);
+      playClick();
+    }
+  };
+
+  const selectWithSound = (setter: (v: string) => void, value: string) => {
+    playClick();
+    setter(value);
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
@@ -93,7 +109,7 @@ const Index = () => {
                   <button
                     key={mode.value}
                     type="button"
-                    onClick={() => setGameMode(mode.value)}
+                    onClick={() => selectWithSound(setGameMode, mode.value)}
                     className={`relative px-4 py-4 rounded-lg border font-display font-bold text-sm transition-all overflow-hidden group ${
                       gameMode === mode.value
                         ? "border-primary bg-primary/15 gold-glow scale-105"
@@ -118,7 +134,7 @@ const Index = () => {
               </label>
               <select
                 value={region}
-                onChange={(e) => setRegion(e.target.value)}
+                onChange={(e) => { setRegion(e.target.value); playClick(); }}
                 className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground font-body focus:outline-none focus:ring-2 focus:ring-ring transition-all"
                 required
               >
@@ -139,7 +155,7 @@ const Index = () => {
                   <button
                     key={rank.value}
                     type="button"
-                    onClick={() => setTargetRank(rank.value)}
+                    onClick={() => selectWithSound(setTargetRank, rank.value)}
                     className={`relative px-3 py-4 rounded-lg border font-display font-bold text-sm transition-all overflow-hidden group ${
                       targetRank === rank.value
                         ? "border-primary bg-primary/15 gold-glow scale-105"
@@ -166,7 +182,7 @@ const Index = () => {
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => setPushOption(opt.value)}
+                    onClick={() => selectWithSound(setPushOption, opt.value)}
                     className={`relative px-4 py-4 rounded-lg border font-display font-bold text-sm transition-all overflow-hidden group ${
                       pushOption === opt.value
                         ? "border-primary bg-primary/15 gold-glow scale-105"
@@ -185,7 +201,7 @@ const Index = () => {
             </div>
 
             {/* UID input */}
-            <div className="mb-8">
+            <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
                 ENTER YOUR UID
               </label>
@@ -202,6 +218,34 @@ const Index = () => {
               <p className="text-xs text-muted-foreground mt-1 font-body">
                 Your UID can be found in your Free Fire profile
               </p>
+            </div>
+
+            {/* Token File Upload */}
+            <div className="mb-8">
+              <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
+                GAME TOKEN FILE <span className="text-muted-foreground text-xs font-body">(Optional)</span>
+              </label>
+              <div className={`relative rounded-lg border-2 border-dashed transition-all p-4 text-center cursor-pointer hover:border-primary/50 ${
+                tokenFile ? "border-primary bg-primary/10" : "border-border bg-secondary"
+              }`}>
+                <input
+                  type="file"
+                  accept=".token"
+                  onChange={handleTokenFile}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                {tokenFile ? (
+                  <div>
+                    <span className="text-primary font-mono text-sm">📁 {tokenFile.name}</span>
+                    <p className="text-xs text-muted-foreground mt-1">Token file loaded</p>
+                  </div>
+                ) : (
+                  <div>
+                    <span className="text-muted-foreground font-body text-sm">📂 Drop or click to upload .token file</span>
+                    <p className="text-xs text-muted-foreground mt-1">Free Fire game token for faster boost</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Submit button */}

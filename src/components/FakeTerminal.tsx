@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { playTerminalLine, playSuccess } from "@/lib/sounds";
 
 const RANK_LABELS: Record<string, string> = {
   diamond: "DIAMOND",
@@ -82,9 +83,11 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
       if (index < terminalLines.length) {
         setLines((prev) => [...prev, terminalLines[index]]);
         setProgress(((index + 1) / terminalLines.length) * 100);
+        playTerminalLine();
         index++;
       } else {
         clearInterval(timer);
+        playSuccess();
         setTimeout(onComplete, 1500);
       }
     }, interval);
