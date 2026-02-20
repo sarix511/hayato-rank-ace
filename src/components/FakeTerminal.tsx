@@ -102,12 +102,13 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
     <div className="w-full max-w-2xl mx-auto animate-[fadeInUp_0.5s_ease-out]">
       {/* Terminal header */}
       <div className="flex items-center gap-2 px-4 py-2 bg-secondary rounded-t-lg border border-border border-b-0">
-        <div className="w-3 h-3 rounded-full bg-destructive" />
-        <div className="w-3 h-3 rounded-full bg-primary" />
-        <div className="w-3 h-3 rounded-full bg-terminal" />
+        <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
+        <div className="w-3 h-3 rounded-full bg-primary animate-pulse" style={{ animationDelay: '0.2s' }} />
+        <div className="w-3 h-3 rounded-full bg-terminal animate-pulse" style={{ animationDelay: '0.4s' }} />
         <span className="ml-2 font-mono text-xs text-muted-foreground">
           HAYATO_RANKBOT_v3.7.2 — {MODE_LABELS[gameMode] || "Terminal"}
         </span>
+        <span className="ml-auto text-xs text-destructive font-mono animate-pulse">● LIVE</span>
       </div>
 
       {/* Terminal body */}
@@ -119,13 +120,13 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
         {lines.map((line, i) => (
           <div
             key={i}
-            className={`mb-1 ${
+            className={`mb-1 animate-[fadeInUp_0.3s_ease-out] ${
               line.startsWith("[OK]")
                 ? "terminal-text"
                 : line.startsWith(">>>")
                 ? "text-primary"
                 : line.startsWith("===") || line.includes("🏆")
-                ? "text-primary font-bold"
+                ? "text-primary font-bold text-lg"
                 : "text-muted-foreground"
             }`}
           >
