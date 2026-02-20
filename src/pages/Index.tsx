@@ -1,11 +1,17 @@
 import { useState, useCallback } from "react";
 import FakeTerminal from "@/components/FakeTerminal";
 import CongratulationsScreen from "@/components/CongratulationsScreen";
+import blueTick from "@/assets/blue-tick.png";
 
 const REGIONS = [
   "India", "Brazil", "Indonesia", "Thailand", "Vietnam",
   "Middle East", "Europe", "North America", "Bangladesh", "Pakistan",
   "Singapore", "Taiwan",
+];
+
+const GAME_MODES = [
+  { value: "br", label: "🎯 Battle Royale", desc: "BR Rank Push" },
+  { value: "cs", label: "⚔️ Clash Squad", desc: "CS Rank Push" },
 ];
 
 const TARGET_RANKS = [
@@ -27,10 +33,11 @@ const Index = () => {
   const [uid, setUid] = useState("");
   const [targetRank, setTargetRank] = useState("");
   const [pushOption, setPushOption] = useState("");
+  const [gameMode, setGameMode] = useState("");
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
-    if (region && uid.length >= 6 && targetRank && pushOption) {
+    if (region && uid.length >= 6 && targetRank && pushOption && gameMode) {
       setStep("terminal");
     }
   };
@@ -53,13 +60,14 @@ const Index = () => {
         />
       </div>
 
-      {/* Header - always visible */}
+      {/* Header */}
       <div className="text-center mb-10 relative z-10">
         <div className="inline-block px-4 py-1 rounded-full bg-secondary border border-border text-xs font-mono text-primary mb-4 tracking-widest">
           GOLDEN VIP ✨
         </div>
-        <h1 className="text-4xl md:text-6xl font-display font-black gold-text-gradient mb-2 tracking-wider">
+        <h1 className="text-4xl md:text-6xl font-display font-black gold-text-gradient mb-2 tracking-wider flex items-center justify-center gap-3">
           HAYATO RANK UP
+          <img src={blueTick} alt="Verified" className="w-10 h-10 md:w-14 md:h-14 inline-block drop-shadow-[0_0_8px_hsl(210,100%,60%)]" />
         </h1>
         <p className="text-muted-foreground font-body text-lg">
           Free Fire Rank Boost Bot
@@ -73,6 +81,34 @@ const Index = () => {
             onSubmit={handleStart}
             className="bg-card border border-border rounded-xl p-8 gold-border-glow animate-[fadeInUp_0.5s_ease-out]"
           >
+            {/* Game Mode */}
+            <div className="mb-6">
+              <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
+                GAME MODE
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {GAME_MODES.map((mode) => (
+                  <button
+                    key={mode.value}
+                    type="button"
+                    onClick={() => setGameMode(mode.value)}
+                    className={`relative px-4 py-4 rounded-lg border font-display font-bold text-sm transition-all overflow-hidden group ${
+                      gameMode === mode.value
+                        ? "border-primary bg-primary/15 gold-glow scale-105"
+                        : "border-border bg-secondary hover:border-primary/50 hover:scale-102"
+                    }`}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    {gameMode === mode.value && <div className="absolute inset-0 shimmer-overlay" />}
+                    <span className={`relative z-10 block text-lg ${gameMode === mode.value ? "gold-text-gradient" : "text-foreground"}`}>
+                      {mode.label}
+                    </span>
+                    <span className="relative z-10 block text-xs text-muted-foreground mt-1">{mode.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Region select */}
             <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
@@ -86,9 +122,7 @@ const Index = () => {
               >
                 <option value="">Choose your server region...</option>
                 {REGIONS.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
+                  <option key={r} value={r}>{r}</option>
                 ))}
               </select>
             </div>
@@ -110,11 +144,8 @@ const Index = () => {
                         : "border-border bg-secondary hover:border-primary/50 hover:scale-102"
                     }`}
                   >
-                    {/* Shimmer overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                    {targetRank === rank.value && (
-                      <div className="absolute inset-0 shimmer-overlay" />
-                    )}
+                    {targetRank === rank.value && <div className="absolute inset-0 shimmer-overlay" />}
                     <span className={`relative z-10 ${targetRank === rank.value ? "gold-text-gradient" : rank.color}`}>
                       {rank.label}
                     </span>
@@ -141,9 +172,7 @@ const Index = () => {
                     }`}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                    {pushOption === opt.value && (
-                      <div className="absolute inset-0 shimmer-overlay" />
-                    )}
+                    {pushOption === opt.value && <div className="absolute inset-0 shimmer-overlay" />}
                     <span className={`relative z-10 block ${pushOption === opt.value ? "gold-text-gradient" : "text-foreground"}`}>
                       {opt.label}
                     </span>
@@ -184,11 +213,16 @@ const Index = () => {
         )}
 
         {step === "terminal" && (
-          <FakeTerminal onComplete={handleTerminalComplete} targetRank={targetRank} duration={PUSH_OPTIONS.find(o => o.value === pushOption)?.duration || 180000} />
+          <FakeTerminal
+            onComplete={handleTerminalComplete}
+            targetRank={targetRank}
+            gameMode={gameMode}
+            duration={PUSH_OPTIONS.find(o => o.value === pushOption)?.duration || 180000}
+          />
         )}
 
         {step === "done" && (
-          <CongratulationsScreen uid={uid} region={region} targetRank={targetRank} />
+          <CongratulationsScreen uid={uid} region={region} targetRank={targetRank} gameMode={gameMode} />
         )}
       </div>
 

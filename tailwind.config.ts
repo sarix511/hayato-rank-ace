@@ -13,8 +13,8 @@ export default {
       },
     },
     fontFamily: {
-      display: ['Orbitron', 'sans-serif'],
-      body: ['Rajdhani', 'sans-serif'],
+      display: ['Russo One', 'sans-serif'],
+      body: ['Exo 2', 'sans-serif'],
       mono: ['Share Tech Mono', 'monospace'],
     },
     extend: {
