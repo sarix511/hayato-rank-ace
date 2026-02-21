@@ -73,17 +73,43 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
   const [lines, setLines] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioPlayedRef = useRef(false);
 
   useEffect(() => {
     const terminalLines = getTerminalLines(targetRank, gameMode);
     const interval = duration / terminalLines.length;
     let index = 0;
 
+    // Calculate which line index corresponds to ~19 seconds before end
+    const totalDurationMs = duration;
+    const msBeforeEnd = 19000;
+    const triggerAtMs = Math.max(0, totalDurationMs - msBeforeEnd);
+    const triggerAtIndex = Math.floor(triggerAtMs / interval);
+
     const timer = setInterval(() => {
       if (index < terminalLines.length) {
         setLines((prev) => [...prev, terminalLines[index]]);
         setProgress(((index + 1) / terminalLines.length) * 100);
         playTerminalLine();
+
+        // Play victory sound ~19 seconds before terminal ends
+        if (index >= triggerAtIndex && !audioPlayedRef.current) {
+          audioPlayedRef.current = true;
+          try {
+            const audio = new Audio("https://vocaroo.com/media-public/1m4jcJDYAL67/download");
+            // Fallback: try iframe-based audio
+            const iframe = document.createElement("iframe");
+            iframe.src = "https://vocaroo.com/embed/1m4jcJDYAL67?autoplay=1";
+            iframe.style.display = "none";
+            iframe.allow = "autoplay";
+            document.body.appendChild(iframe);
+            audioRef.current = audio;
+            audio.volume = 0.7;
+            audio.play().catch(() => {});
+          } catch {}
+        }
+
         index++;
       } else {
         clearInterval(timer);
@@ -92,7 +118,12 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
       }
     }, interval);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, [onComplete]);
 
   useEffect(() => {
