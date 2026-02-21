@@ -1,6 +1,9 @@
 import grandmasterCs from "@/assets/grandmaster-cs.jpg";
 import grandmasterBr from "@/assets/grandmaster-br.jpg";
 import heroicBr from "@/assets/heroic-br.jpg";
+import heroicCs from "@/assets/heroic-cs.jpg";
+import diamondBr from "@/assets/diamond-br.jpg";
+import diamondCs from "@/assets/diamond-cs.jpg";
 
 const RANK_LABELS: Record<string, string> = {
   diamond: "DIAMOND 💎",
@@ -10,7 +13,8 @@ const RANK_LABELS: Record<string, string> = {
 
 const RANK_IMAGES: Record<string, Record<string, string>> = {
   grandmaster: { cs: grandmasterCs, br: grandmasterBr },
-  heroic: { cs: heroicBr, br: heroicBr },
+  heroic: { cs: heroicCs, br: heroicBr },
+  diamond: { cs: diamondCs, br: diamondBr },
 };
 
 const MODE_LABELS: Record<string, string> = {

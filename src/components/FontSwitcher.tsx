@@ -5,12 +5,16 @@ const FONTS = [
   { label: "Russo One", display: "'Russo One', sans-serif", body: "'Exo 2', sans-serif" },
   { label: "Press Start", display: "'Press Start 2P', monospace", body: "'Share Tech Mono', monospace" },
   { label: "Poppins", display: "'Poppins', sans-serif", body: "'Poppins', sans-serif" },
+  { label: "Bebas Neue", display: "'Bebas Neue', sans-serif", body: "'Inter', sans-serif" },
+  { label: "Righteous", display: "'Righteous', sans-serif", body: "'Quicksand', sans-serif" },
+  { label: "Bungee", display: "'Bungee', sans-serif", body: "'Space Mono', monospace" },
+  { label: "Audiowide", display: "'Audiowide', sans-serif", body: "'Exo 2', sans-serif" },
 ];
 
 // Inject extra Google Fonts on mount
 const link = document.createElement("link");
 link.rel = "stylesheet";
-link.href = "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;500;600;700;800;900&family=Russo+One&family=Exo+2:wght@400;500;600;700;800;900&display=swap";
+link.href = "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;500;600;700;800;900&family=Russo+One&family=Exo+2:wght@400;500;600;700;800;900&family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Righteous&family=Quicksand:wght@400;500;600;700&family=Bungee&family=Space+Mono:wght@400;700&family=Audiowide&display=swap";
 document.head.appendChild(link);
 
 const FontSwitcher = () => {
@@ -22,7 +26,6 @@ const FontSwitcher = () => {
     const f = FONTS[index];
     document.documentElement.style.setProperty("--font-display", f.display);
     document.documentElement.style.setProperty("--font-body", f.body);
-    // Apply directly to elements
     document.querySelectorAll<HTMLElement>(".font-display").forEach(el => el.style.fontFamily = f.display);
     document.querySelectorAll<HTMLElement>(".font-body").forEach(el => el.style.fontFamily = f.body);
     document.body.style.fontFamily = f.body;
@@ -31,7 +34,7 @@ const FontSwitcher = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {open && (
-        <div className="mb-2 bg-card border border-border rounded-lg p-3 gold-border-glow animate-[fadeInUp_0.2s_ease-out]">
+        <div className="mb-2 bg-card border border-border rounded-lg p-3 gold-border-glow animate-[fadeInUp_0.2s_ease-out] max-h-72 overflow-y-auto">
           <p className="text-xs font-mono text-muted-foreground mb-2">CHANGE FONT</p>
           <div className="space-y-1">
             {FONTS.map((f, i) => (
