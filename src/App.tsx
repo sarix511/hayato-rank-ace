@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import FontSwitcher from "./components/FontSwitcher";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 import AiChatBot from "./components/AiChatBot";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
       <FontSwitcher />
+      <ThemeSwitcher />
       <AiChatBot />
     </TooltipProvider>
   </QueryClientProvider>

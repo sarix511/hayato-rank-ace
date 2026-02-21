@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { playTerminalLine, playSuccess } from "@/lib/sounds";
+import { playTerminalLine, playSuccess, playVictoryFanfare } from "@/lib/sounds";
 
 const RANK_LABELS: Record<string, string> = {
   diamond: "DIAMOND",
@@ -73,7 +73,6 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
   const [lines, setLines] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioPlayedRef = useRef(false);
 
   useEffect(() => {
@@ -93,21 +92,10 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
         setProgress(((index + 1) / terminalLines.length) * 100);
         playTerminalLine();
 
-        // Play victory sound ~19 seconds before terminal ends
+        // Play victory fanfare ~19 seconds before terminal ends
         if (index >= triggerAtIndex && !audioPlayedRef.current) {
           audioPlayedRef.current = true;
-          try {
-            const audio = new Audio("https://vocaroo.com/media-public/1m4jcJDYAL67/download");
-            // Fallback: try iframe-based audio
-            const iframe = document.createElement("iframe");
-            iframe.src = "https://vocaroo.com/embed/1m4jcJDYAL67?autoplay=1";
-            iframe.style.display = "none";
-            iframe.allow = "autoplay";
-            document.body.appendChild(iframe);
-            audioRef.current = audio;
-            audio.volume = 0.7;
-            audio.play().catch(() => {});
-          } catch {}
+          playVictoryFanfare();
         }
 
         index++;
@@ -120,9 +108,6 @@ const FakeTerminal = ({ onComplete, targetRank, gameMode, duration }: FakeTermin
 
     return () => {
       clearInterval(timer);
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
     };
   }, [onComplete]);
 
