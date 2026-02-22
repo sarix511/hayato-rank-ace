@@ -4,6 +4,7 @@ import heroicBr from "@/assets/heroic-br.jpg";
 import heroicCs from "@/assets/heroic-cs.jpg";
 import diamondBr from "@/assets/diamond-br.jpg";
 import diamondCs from "@/assets/diamond-cs.jpg";
+import CooldownTimer from "@/components/CooldownTimer";
 
 const RANK_LABELS: Record<string, string> = {
   diamond: "DIAMOND 💎",
@@ -81,6 +82,9 @@ const CongratulationsScreen = ({ uid, region, targetRank, gameMode }: { uid: str
           Because your Rank Bot has started! Wait 10-15 minutes before opening Free Fire.
         </p>
       </div>
+
+      {/* Cooldown Timer */}
+      <CooldownTimer />
     </div>
   );
 };
