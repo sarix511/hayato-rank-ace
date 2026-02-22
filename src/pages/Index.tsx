@@ -1,6 +1,13 @@
 import { useState, useCallback } from "react";
 import FakeTerminal from "@/components/FakeTerminal";
 import CongratulationsScreen from "@/components/CongratulationsScreen";
+import LiveStatsPanel from "@/components/LiveStatsPanel";
+import FakeReviews from "@/components/FakeReviews";
+import RecentActivityFeed from "@/components/RecentActivityFeed";
+import FriendsBoost from "@/components/FriendsBoost";
+import BotPersonalitySelector from "@/components/BotPersonalitySelector";
+import LanguageSwitcher, { type Lang, TRANSLATIONS } from "@/components/LanguageSwitcher";
+import ServerLoadMeter from "@/components/ServerLoadMeter";
 import blueTick from "@/assets/blue-tick.png";
 import { playClick } from "@/lib/sounds";
 
@@ -36,7 +43,10 @@ const Index = () => {
   const [pushOption, setPushOption] = useState("");
   const [gameMode, setGameMode] = useState("");
   const [tokenFile, setTokenFile] = useState<File | null>(null);
+  const [botPersonality, setBotPersonality] = useState("");
+  const [lang, setLang] = useState<Lang>("en");
 
+  const t = TRANSLATIONS[lang];
   const isFormValid = region !== "" && uid.length >= 6 && targetRank !== "" && pushOption !== "" && gameMode !== "";
 
   const handleStart = (e: React.FormEvent) => {
@@ -65,7 +75,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 pt-20 relative overflow-hidden">
+      <ServerLoadMeter />
+      <LanguageSwitcher lang={lang} setLang={setLang} />
+
       {/* Background particles */}
       <div className="absolute inset-0 pointer-events-none">
         <div
@@ -79,7 +92,7 @@ const Index = () => {
       </div>
 
       {/* Header */}
-      <div className="text-center mb-10 relative z-10">
+      <div className="text-center mb-6 relative z-10">
         <div className="inline-block px-4 py-1 rounded-full bg-secondary border border-border text-xs font-mono text-primary mb-4 tracking-widest">
           GOLDEN VIP ✨
         </div>
@@ -92,6 +105,11 @@ const Index = () => {
         </p>
       </div>
 
+      {/* Live Stats */}
+      <div className="relative z-10 w-full max-w-2xl">
+        <LiveStatsPanel />
+      </div>
+
       {/* Content area */}
       <div className="relative z-10 w-full max-w-2xl">
         {step === "form" && (
@@ -102,7 +120,7 @@ const Index = () => {
             {/* Game Mode */}
             <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                GAME MODE
+                {t.gameMode}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 {GAME_MODES.map((mode) => (
@@ -130,7 +148,7 @@ const Index = () => {
             {/* Region select */}
             <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                SELECT REGION
+                {t.selectRegion}
               </label>
               <select
                 value={region}
@@ -138,7 +156,7 @@ const Index = () => {
                 className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground font-body focus:outline-none focus:ring-2 focus:ring-ring transition-all"
                 required
               >
-                <option value="">Choose your server region...</option>
+                <option value="">{t.chooseRegion}</option>
                 {REGIONS.map((r) => (
                   <option key={r} value={r}>{r}</option>
                 ))}
@@ -148,7 +166,7 @@ const Index = () => {
             {/* Target Rank */}
             <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                TARGET RANK
+                {t.targetRank}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {TARGET_RANKS.map((rank) => (
@@ -175,7 +193,7 @@ const Index = () => {
             {/* Push Duration */}
             <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                PUSH DURATION
+                {t.pushDuration}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 {PUSH_OPTIONS.map((opt) => (
@@ -200,10 +218,17 @@ const Index = () => {
               </div>
             </div>
 
+            {/* Bot Personality */}
+            <BotPersonalitySelector
+              value={botPersonality}
+              onChange={setBotPersonality}
+              labelText={t.botPersonality}
+            />
+
             {/* UID input */}
             <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                ENTER YOUR UID
+                {t.enterUid}
               </label>
               <input
                 type="text"
@@ -216,14 +241,14 @@ const Index = () => {
                 maxLength={15}
               />
               <p className="text-xs text-muted-foreground mt-1 font-body">
-                Your UID can be found in your Free Fire profile
+                {t.uidHint}
               </p>
             </div>
 
             {/* Token File Upload */}
-            <div className="mb-8">
+            <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                GAME TOKEN FILE <span className="text-muted-foreground text-xs font-body">(Optional)</span>
+                {t.tokenFile} <span className="text-muted-foreground text-xs font-body">{t.optional}</span>
               </label>
               <div className={`relative rounded-lg border-2 border-dashed transition-all p-4 text-center cursor-pointer hover:border-primary/50 ${
                 tokenFile ? "border-primary bg-primary/10" : "border-border bg-secondary"
@@ -241,12 +266,15 @@ const Index = () => {
                   </div>
                 ) : (
                   <div>
-                    <span className="text-muted-foreground font-body text-sm">📂 Drop or click to upload .token file</span>
-                    <p className="text-xs text-muted-foreground mt-1">Free Fire game token for faster boost</p>
+                    <span className="text-muted-foreground font-body text-sm">{t.dropToken}</span>
+                    <p className="text-xs text-muted-foreground mt-1">{t.tokenHint}</p>
                   </div>
                 )}
               </div>
             </div>
+
+            {/* Friends Boost */}
+            <FriendsBoost />
 
             {/* Submit button */}
             <button
@@ -258,7 +286,7 @@ const Index = () => {
                   : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
               }`}
             >
-              {isFormValid ? "🚀 START RANK UP" : "⚠️ FILL ALL FIELDS"}
+              {isFormValid ? t.startRankUp : t.fillAllFields}
             </button>
           </form>
         )}
@@ -276,6 +304,14 @@ const Index = () => {
           <CongratulationsScreen uid={uid} region={region} targetRank={targetRank} gameMode={gameMode} />
         )}
       </div>
+
+      {/* Below-form sections (only on form step) */}
+      {step === "form" && (
+        <div className="relative z-10 w-full max-w-2xl mt-8">
+          <FakeReviews />
+          <RecentActivityFeed />
+        </div>
+      )}
 
       {/* Footer */}
       <p className="mt-10 text-xs text-muted-foreground font-mono relative z-10 tracking-wider">

@@ -28,7 +28,7 @@ const ThemeSwitcher = () => {
   };
 
   return (
-    <div className="fixed bottom-4 left-4 z-50">
+    <div className="fixed bottom-4 left-[4.5rem] z-50">
       {open && (
         <div className="mb-2 bg-card border border-border rounded-lg p-3 gold-border-glow animate-[fadeInUp_0.2s_ease-out]">
           <p className="text-xs font-mono text-muted-foreground mb-2">COLOR THEME</p>
