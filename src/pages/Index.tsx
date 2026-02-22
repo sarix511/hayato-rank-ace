@@ -8,6 +8,11 @@ import FriendsBoost from "@/components/FriendsBoost";
 import BotPersonalitySelector from "@/components/BotPersonalitySelector";
 import LanguageSwitcher, { type Lang, TRANSLATIONS } from "@/components/LanguageSwitcher";
 import ServerLoadMeter from "@/components/ServerLoadMeter";
+import MaskSelector from "@/components/MaskSelector";
+import ConfidenceInjection from "@/components/ConfidenceInjection";
+import PastLifeCheck from "@/components/PastLifeCheck";
+import DeviceDetector from "@/components/DeviceDetector";
+import ShadowMode from "@/components/ShadowMode";
 import blueTick from "@/assets/blue-tick.png";
 import { playClick } from "@/lib/sounds";
 
@@ -78,6 +83,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 pt-20 relative overflow-hidden">
       <ServerLoadMeter />
       <LanguageSwitcher lang={lang} setLang={setLang} />
+      <ConfidenceInjection />
 
       {/* Background particles */}
       <div className="absolute inset-0 pointer-events-none">
@@ -217,6 +223,18 @@ const Index = () => {
                 ))}
               </div>
             </div>
+
+            {/* Mask Selection */}
+            <MaskSelector />
+
+            {/* Past Life Check */}
+            <PastLifeCheck />
+
+            {/* Shadow Mode */}
+            <ShadowMode />
+
+            {/* Device Detector */}
+            <DeviceDetector />
 
             {/* Bot Personality */}
             <BotPersonalitySelector
