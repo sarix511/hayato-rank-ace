@@ -23,9 +23,9 @@ const UidChecker = ({ uid, setUid }: Props) => {
         playClick();
         setResult({
           valid: true,
-          name: FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)],
-          level: Math.floor(Math.random() * 30 + 50),
-          region: ["IND", "BR", "SG", "ME", "PK", "BD"][Math.floor(Math.random() * 6)],
+          name: "",
+          level: 0,
+          region: "PK",
         });
         setChecking(false);
       }, 2000);
@@ -75,19 +75,9 @@ const UidChecker = ({ uid, setUid }: Props) => {
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-mono text-green-400">✅ UID VERIFIED — REAL ACCOUNT</span>
           </div>
-          <div className="grid grid-cols-3 gap-2 mt-2">
-            <div className="text-center">
-              <p className="text-[10px] text-muted-foreground">Player Name</p>
-              <p className="text-xs font-mono font-bold text-foreground">{result.name}</p>
-            </div>
-            <div className="text-center">
-              <p className="text-[10px] text-muted-foreground">Level</p>
-              <p className="text-xs font-mono font-bold text-primary">{result.level}</p>
-            </div>
-            <div className="text-center">
-              <p className="text-[10px] text-muted-foreground">Region</p>
-              <p className="text-xs font-mono font-bold text-foreground">{result.region}</p>
-            </div>
+          <div className="text-center">
+            <p className="text-[10px] text-muted-foreground">Region</p>
+            <p className="text-xs font-mono font-bold text-foreground">{result.region}</p>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2 font-mono">
             🤖 AI Confidence: 99.7% — Account eligible for rank boost
