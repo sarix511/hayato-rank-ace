@@ -4,15 +4,12 @@ import CongratulationsScreen from "@/components/CongratulationsScreen";
 import LiveStatsPanel from "@/components/LiveStatsPanel";
 import FakeReviews from "@/components/FakeReviews";
 import RecentActivityFeed from "@/components/RecentActivityFeed";
-import FriendsBoost from "@/components/FriendsBoost";
-import BotPersonalitySelector from "@/components/BotPersonalitySelector";
 import LanguageSwitcher, { type Lang, TRANSLATIONS } from "@/components/LanguageSwitcher";
 import ServerLoadMeter from "@/components/ServerLoadMeter";
-import MaskSelector from "@/components/MaskSelector";
 import ConfidenceInjection from "@/components/ConfidenceInjection";
-import PastLifeCheck from "@/components/PastLifeCheck";
 import DeviceDetector from "@/components/DeviceDetector";
 import ShadowMode from "@/components/ShadowMode";
+import UidChecker from "@/components/UidChecker";
 import blueTick from "@/assets/blue-tick.png";
 import { playClick } from "@/lib/sounds";
 
@@ -48,7 +45,7 @@ const Index = () => {
   const [pushOption, setPushOption] = useState("");
   const [gameMode, setGameMode] = useState("");
   const [tokenFile, setTokenFile] = useState<File | null>(null);
-  const [botPersonality, setBotPersonality] = useState("");
+  const [tokenError, setTokenError] = useState(false);
   const [lang, setLang] = useState<Lang>("en");
 
   const t = TRANSLATIONS[lang];
@@ -71,6 +68,8 @@ const Index = () => {
     if (file) {
       setTokenFile(file);
       playClick();
+      // Show expired error after brief delay
+      setTimeout(() => setTokenError(true), 1500);
     }
   };
 
@@ -224,63 +223,40 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Mask Selection */}
-            <MaskSelector />
-
-            {/* Past Life Check */}
-            <PastLifeCheck />
-
             {/* Shadow Mode */}
             <ShadowMode />
 
             {/* Device Detector */}
             <DeviceDetector />
 
-            {/* Bot Personality */}
-            <BotPersonalitySelector
-              value={botPersonality}
-              onChange={setBotPersonality}
-              labelText={t.botPersonality}
-            />
-
-            {/* UID input */}
-            <div className="mb-6">
-              <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                {t.enterUid}
-              </label>
-              <input
-                type="text"
-                value={uid}
-                onChange={(e) => setUid(e.target.value.replace(/\D/g, ""))}
-                placeholder="Enter your Free Fire UID..."
-                className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-                required
-                minLength={6}
-                maxLength={15}
-              />
-              <p className="text-xs text-muted-foreground mt-1 font-body">
-                {t.uidHint}
-              </p>
-            </div>
+            {/* UID input with AI checker */}
+            <UidChecker uid={uid} setUid={setUid} />
 
             {/* Token File Upload */}
             <div className="mb-6">
               <label className="block text-sm font-display font-semibold text-foreground mb-2 tracking-wide">
-                {t.tokenFile} <span className="text-muted-foreground text-xs font-body">{t.optional}</span>
+                {t.tokenFile}
               </label>
               <div className={`relative rounded-lg border-2 border-dashed transition-all p-4 text-center cursor-pointer hover:border-primary/50 ${
-                tokenFile ? "border-primary bg-primary/10" : "border-border bg-secondary"
+                tokenError ? "border-destructive bg-destructive/10" : tokenFile ? "border-primary bg-primary/10" : "border-border bg-secondary"
               }`}>
                 <input
                   type="file"
-                  accept=".token"
+                  accept=".token,.txt,.bin"
                   onChange={handleTokenFile}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                {tokenFile ? (
+                {tokenError ? (
+                  <div className="animate-fade-in">
+                    <span className="text-destructive font-mono text-sm">❌ {tokenFile?.name}</span>
+                    <p className="text-xs text-destructive font-bold mt-1">⚠️ TOKEN FILE EXPIRED</p>
+                    <p className="text-xs text-destructive/80 font-mono mt-1">API Status: ERROR 403 — Session token invalid or revoked</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Please generate a new token from the official panel</p>
+                  </div>
+                ) : tokenFile ? (
                   <div>
                     <span className="text-primary font-mono text-sm">📁 {tokenFile.name}</span>
-                    <p className="text-xs text-muted-foreground mt-1">Token file loaded</p>
+                    <p className="text-xs text-muted-foreground mt-1">Verifying token...</p>
                   </div>
                 ) : (
                   <div>
@@ -290,9 +266,6 @@ const Index = () => {
                 )}
               </div>
             </div>
-
-            {/* Friends Boost */}
-            <FriendsBoost />
 
             {/* Submit button */}
             <button
