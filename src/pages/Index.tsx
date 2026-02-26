@@ -12,7 +12,7 @@ import ShadowMode from "@/components/ShadowMode";
 import UidChecker from "@/components/UidChecker";
 import blueTick from "@/assets/blue-tick.png";
 import { playClick } from "@/lib/sounds";
-import ServerDownPopup from "@/components/ServerDownPopup";
+
 
 const REGIONS = [
   "India", "Brazil", "Indonesia", "Thailand", "Vietnam",
@@ -81,7 +81,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 pt-20 relative overflow-hidden">
-      <ServerDownPopup />
+      
       <LanguageSwitcher lang={lang} setLang={setLang} />
       <ConfidenceInjection />
 
